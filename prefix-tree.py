@@ -24,9 +24,6 @@ class PrefixTree:
             currentNode = node
 
     def _dbgPrint(self, node, str):
-        if node == None:
-            return
-
         if node.getValue():
             str = str + node.getValue()
 
@@ -38,8 +35,8 @@ class PrefixTree:
         sys.stdout.write("\n")
 
         for key in node.getAllSiblings():
-            node = node.getSiblingByKey(key)
-            self._dbgPrint(node, str)
+            sibNode = node.getSiblingByKey(key)
+            self._dbgPrint(sibNode, str)
 
     def dbgPrint(self):
         self._dbgPrint(self._root, "")
@@ -76,10 +73,7 @@ def main():
     words = (
     'amok',
     'amoks',
-    'amole'
-    )
-
-    tst=(
+    'amole',
     'amoles',
     'among',
     'amongst',
@@ -103,9 +97,7 @@ def main():
     tree = PrefixTree()
     for w in words:
         tree.add(w)
-        #print(w)
-
-    #print (tree)
+        
     tree.dbgPrint()
 
 

@@ -5,29 +5,34 @@ class PrefixTree:
     def __init__(self):
         self._root = self.Node()
 
+
     def __str__(self):
         return self._root.__str__()
 
-    def add(self, word):
+
+    def add(self, word, description):
         currentNode = self._root
 
         for i in range(len(word)):
             nextNode = currentNode.getSiblingByKey(word[i])
             if nextNode == None:
                 break;
-
+                
             currentNode = nextNode
 
         for j in range(i, len(word)):
             node = self.Node(word[j])
             currentNode.addSibling(node)
             currentNode = node
+            
+        currentNode.setDescription(description)
 
-    def _dbgPrint(self, node, str):
+
+    def _printTree(self, node, path):
         if node.getValue():
-            str = str + node.getValue()
+            path = path + node.getValue()
 
-        sys.stdout.write(str + ": ") # root
+        sys.stdout.write(path + ": ") # root
 
         for key in node.getAllSiblings():
             sys.stdout.write(key + " ")
@@ -36,15 +41,39 @@ class PrefixTree:
 
         for key in node.getAllSiblings():
             sibNode = node.getSiblingByKey(key)
-            self._dbgPrint(sibNode, str)
+            self._printTree(sibNode, path)
 
-    def dbgPrint(self):
-        self._dbgPrint(self._root, "")
+
+    def printTree(self):
+        self._printTree(self._root, "")
+        
+    
+    def _printContent(self, node, path):
+        if node.getValue():
+            path = path + node.getValue()
+            
+        if node.getDescription():
+            print("{} = {}".format(path, node.getDescription()))
+            
+        for key in node.getAllSiblings():
+            newNode = node.getSiblingByKey(key)
+            self._printContent(newNode, path)
+            
+    
+    def printContent(self):
+        self._printContent(self._root, "")
 
 
     class Node:
-        def __init__(self, value = None):
+        '''
+        Prefix tree node. Each node has value, description and siblings. The value is 
+        single letter from the word. The description describes concrete word. Thus every
+        node with defined description is the last node (letter) of the word. The siblings
+        is dict where a key is value (letter) of sibling's node and dict's value is node iself.
+        '''
+        def __init__(self, value = None, description = None):
             self._value = value
+            self._description = description
             self._siblings = {}
 
         def __str__(self):
@@ -55,6 +84,12 @@ class PrefixTree:
 
         def setValue(self, value):
             self._value = value
+            
+        def getDescription(self):
+            return self._description
+            
+        def setDescription(self, desc):
+            self._description = desc
 
         def getAllSiblings(self):
             return self._siblings
@@ -96,9 +131,10 @@ def main():
 
     tree = PrefixTree()
     for w in words:
-        tree.add(w)
+        tree.add(w, "This is description of the word: " + w)
         
-    tree.dbgPrint()
+    tree.printTree()
+    tree.printContent()
 
 
 if __name__ == "__main__":

@@ -11,6 +11,10 @@ class PrefixTree:
 
 
     def add(self, word, description):
+        '''
+        Add new word to the tree. The last node (representing the word itself) 
+        contains description of the word.
+        '''
         currentNode = self._root
 
         for i in range(len(word)):
@@ -26,6 +30,20 @@ class PrefixTree:
             currentNode = node
             
         currentNode.setDescription(description)
+        
+        
+    def remove(self, word):
+        '''
+        Remove the word in this tree. Return True on success and False if the word
+        is not in tree.
+        '''
+        pass
+        
+    def find(self, word):
+        '''
+        Find the word and return its description or None.
+        '''
+        pass
 
 
     def _printTree(self, node, path):
@@ -45,6 +63,10 @@ class PrefixTree:
 
 
     def printTree(self):
+        '''
+        Print structure of this tree. Path (prefix of a word) and all 
+        silblings of a node are printed for each node.
+        '''
         self._printTree(self._root, "")
         
     
@@ -61,6 +83,9 @@ class PrefixTree:
             
     
     def printContent(self):
+        '''
+        Print all words with description in this tree.
+        '''
         self._printContent(self._root, "")
 
 

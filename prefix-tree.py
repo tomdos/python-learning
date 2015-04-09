@@ -37,22 +37,46 @@ class PrefixTree:
         Remove the word in this tree. Return True on success and False if the word
         is not in tree.
         '''
-        pass
+        node = self._getNodeByPath(word[:-1])
+        if node == None:
+            return False
+            
+        sibNode = node.getSiblingByKey(word[-1])
+        if sibNode == None:
+            return False
+            
+        if sibNode.getDescription() == None:
+            return False
+            
+        # The word is in tree
+        if sibNode.getAllSiblings() == False:
+            node.delSibling(sibNode)
+        else:
+            sibNode.setDescription(None)
+            
+        return True
         
         
-    def find(self, word):
-        '''
-        Find the word and return its description or None.
-        '''
-        
+    def _getNodeByPath(self, word):
         currentNode = self._root
         for i in range(len(word)):
             currentNode = currentNode.getSiblingByKey(word[i])
             if currentNode == None:
                 return None
         
-        return currentNode.getDescription()
-
+        return currentNode
+        
+        
+    def find(self, word):
+        '''
+        Find the word and return its description or None.
+        '''
+        node = self._getNodeByPath(word)
+        if node:
+            return node.getDescription()
+        else:
+            return None
+            
 
     def _printTree(self, node, path):
         if node.getValue():
@@ -135,6 +159,9 @@ class PrefixTree:
 
         def addSibling(self, node):
             self._siblings[node.getValue()] = node
+            
+        def delSibling(self, node):
+            del self._siblings[node.getValue()]
 
 
 def main():
@@ -168,9 +195,22 @@ def main():
         
     #tree.printTree()
     #tree.printContent()
-    print("amok: ", tree.find("amok"))
-    print("amorphousness: ", tree.find("amorphousness"))
-    print("amorphoNotExists: ", tree.find("amorphoNotExists"))
+    
+    # Find
+    #print("amok: ", tree.find("amok"))
+    #print("amorphousness: ", tree.find("amorphousness"))
+    #print("amorphoNotExists: ", tree.find("amorphoNotExists"))
+    
+    # Remove
+    tree.remove("amontillados")
+    tree.remove("amok")
+    tree.remove("amorphously")
+    tree.remove("amoralNotExists")
+    
+    print(tree.find("amontillados"))
+    print(tree.find("amok"))
+    print(tree.find("amorphously"))
+    print(tree.find("amoral"))
 
 
 if __name__ == "__main__":

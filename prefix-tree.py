@@ -39,11 +39,19 @@ class PrefixTree:
         '''
         pass
         
+        
     def find(self, word):
         '''
         Find the word and return its description or None.
         '''
-        pass
+        
+        currentNode = self._root
+        for i in range(len(word)):
+            currentNode = currentNode.getSiblingByKey(word[i])
+            if currentNode == None:
+                return None
+        
+        return currentNode.getDescription()
 
 
     def _printTree(self, node, path):
@@ -158,8 +166,11 @@ def main():
     for w in words:
         tree.add(w, "This is description of the word: " + w)
         
-    tree.printTree()
-    tree.printContent()
+    #tree.printTree()
+    #tree.printContent()
+    print("amok: ", tree.find("amok"))
+    print("amorphousness: ", tree.find("amorphousness"))
+    print("amorphoNotExists: ", tree.find("amorphoNotExists"))
 
 
 if __name__ == "__main__":

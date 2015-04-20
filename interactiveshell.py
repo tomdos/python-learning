@@ -27,6 +27,11 @@ class InteractiveShell(cmd.Cmd):
             
     
     def do_cd(self, line):
+        """
+        CD autocompletion - unfortunately it it is not working as I wish. I am 
+        searching for similar solution as in shell. I got very similar behaviour 
+        however autocompleted path is not relative path but absolut.
+        """
         if not line:
             newCwd = '/'
         else:

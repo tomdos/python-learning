@@ -3,9 +3,14 @@ import cmd
 import os
 import readline
 import re
+import sys
 
 class InteractiveShell(cmd.Cmd):
     cwd = "/"
+    
+    def __init__(self):
+        cmd.Cmd.__init__(self)
+
         
     def do_exit(self, line):
         pass
@@ -24,6 +29,12 @@ class InteractiveShell(cmd.Cmd):
                 print name
         except OSError:
             print "No such file or directory: ", directory
+    
+    def do_put(self, line):
+        print "put ", line
+        
+    def complete_put(self, text, line, begidx, endidx):
+        return self.complete_cd(text, line, begidx, endidx)
             
     
     def do_cd(self, line):
@@ -33,7 +44,7 @@ class InteractiveShell(cmd.Cmd):
         however autocompleted path is not relative path but absolut.
         """
         if not line:
-            newCwd = '/'
+            newCwd = '.'
         else:
             newCwd = line
         
@@ -46,21 +57,26 @@ class InteractiveShell(cmd.Cmd):
     
     def complete_cd(self, text, line, begidx, endidx):
         #print "\n=== text:", text, " line:", line, " begidx:", begidx, " endidx:", endidx
-        
-        if not text:
-            dirname = self.cwd
-            prefix = "."
-        else:
-            dirname = os.path.dirname(text)
-            if not dirname:
-                dirname = self.cwd
                 
-            prefix = os.path.basename(text)
-            if not prefix:
-                prefix = '.'
+        dirname = os.path.dirname(text)
+        if not dirname:
+            dirname = self.cwd
+                
+        prefix = os.path.basename(text)
+        if not prefix:
+            prefix = '.'                
             
         pattern = "".join(["^", prefix, ".*"])
-        completions = [os.path.join(dirname,name) for name in os.listdir(dirname) if os.path.isdir(os.path.join(dirname,name)) and re.search(pattern, name)]
+        completions = [name+os.sep for name in os.listdir(dirname) if os.path.isdir(os.path.join(dirname,name)) and re.search(pattern, name)]
+        
+        try:
+            #if len(completions) == 1:
+            if text:
+                dirname = os.path.dirname(text)
+                completions = [os.path.join(dirname,name) for name in completions]
+        except:
+            print sys.exc_info()
+    
         return completions
 
         

@@ -10,6 +10,7 @@ class ReadLineCompleter:
         readline.parse_and_bind('tab: complete')
         readline.set_completer(self.complete)
         readline.set_completer_delims('\n')
+        self.cwd = '.'
     
     def complete_path(self, current_path, prefix):
         pass
@@ -24,19 +25,21 @@ class ReadLineCompleter:
         pass
     def cmd_stat(self):
         pass
+    def cmd_something(self):
+        pass
 
     def cmd_exit(self):
         pass  
         
     def cmd_ls(self):
-        pass        
+        return self.complete_cd(origline, complete_word)        
     
     def cmd_cd(self, origline, complete_word):
         return self.complete_cd(origline, complete_word)
         
     def complete_cd(self, origline, complete_word):
         #print "\n=== text:", text, " line:", line, " begidx:", begidx, " endidx:", endidx
-        self.cwd = "/"
+        #self.cwd = "/"
         
         if not complete_word:
             dirname = self.cwd
@@ -51,29 +54,38 @@ class ReadLineCompleter:
                 prefix = '.'
             
         pattern = "".join(["^", prefix, ".*"])
-        completions = [name for name in os.listdir(dirname) if os.path.isdir(os.path.join(dirname,name)) and re.search(pattern, name)]
+        completions = [name+os.sep for name in os.listdir(dirname) if os.path.isdir(os.path.join(dirname,name)) and re.search(pattern, name)]
+        
+        if complete_word:
+            dirname = os.path.dirname(complete_word)
+            completions = [os.path.join(dirname,name) for name in completions]
         
         return completions
         
         
     def complete(self, text, state):
         # TODO - completer (readline) will not raise exception???
+        if state != 0:
+            return None
+            
         try:
             origline = readline.get_line_buffer()
             words = origline.split()
             begin = readline.get_begidx()
             end = readline.get_endidx()
             
-            print text
-            print begin
-            print end
+            #print
+            #print text
+            #print begin
+            #print end
             
             if not origline or origline.find(" ") == -1:
-                completions = [c for c in self.commands if c.startswith(text)]
+                completions = [c for c in self.get_commands() if c.startswith(text)]
             else:
                 try:
                     fcnt = getattr(self, "cmd_" + words[0])
                     completions = fcnt(origline, words[-1])
+                    completions = [origline[0:-len(words[-1])] + i for i in completions]
                 except:
                     print sys.exc_info()
                     raise
@@ -82,19 +94,51 @@ class ReadLineCompleter:
             
             sys.stdout.write("> " + text)
             
-            readline.redisplay()
-            #readline.insert_text("ASDASD")
-            
-            return completions
+            #readline.redisplay()
+                        
+            #return completions
+            if len(completions) == 1:    
+                return completions[0]
+            else:
+                return os.path.commonprefix(completions)
+                
         except:
             print "Complete exception: ", sys.exc_info()
+    
+    def cmd(self, line):
+        words = line.split();
         
+        if words[0] == "cd":
+            if len(words) > 1:
+                newCwd = words[1]
+            else:
+                newCwd = "/"
+                
+            try:
+                os.chdir(words[1])
+                self.cwd = os.path.join(self.cwd, newCwd) #FIXME
+            except OSError:
+                print "No such file or directory: ", newCwd
+                
+        elif words[0] == "ls":
+            if len(words) > 1:
+                directory = words[1]
+            else:
+                directory = self.cwd
+                
+            try:
+                for name in os.listdir(directory):
+                    print name
+            except OSError:
+                print "No such file or directory: ", directory
+    
         
     def loop(self):
         line = ''
         while line != 'stop':
             #sys.stdout.write("> ")
             self.line = raw_input("> ")
+            self.cmd(self.line)
             print "line:", self.line
             
 

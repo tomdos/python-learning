@@ -95,6 +95,7 @@ class ReadLineCompleter:
                 try:
                     fcnt = getattr(self, "complete_" + words[0])
                     completions = fcnt(origline, words[-1])
+                    ## FIXME Linux x Mac
                     #completions = [origline[0:-len(words[-1])] + i for i in completions]
                 except:
                     print sys.exc_info()

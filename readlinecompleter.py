@@ -32,32 +32,35 @@ class ReadLineCompleter:
         pass  
         
     def cmd_ls(self):
-        return self.complete_cd(origline, complete_word)        
+        pass
     
-    def cmd_cd(self, origline, complete_word):
-        return self.complete_cd(origline, complete_word)
+    def cmd_cd(self):
+        pass
         
-    def complete_cd(self, origline, complete_word):
+    def complete_ls(self, line, word):
+        return self.complete_cd(line, word)
+        
+    def complete_cd(self, line, word):
         #print "\n=== text:", text, " line:", line, " begidx:", begidx, " endidx:", endidx
         #self.cwd = "/"
         
-        if not complete_word:
+        if not word:
             dirname = self.cwd
             prefix = "."
         else:
-            dirname = os.path.dirname(complete_word)
+            dirname = os.path.dirname(word)
             if not dirname:
                 dirname = self.cwd
                 
-            prefix = os.path.basename(complete_word)
+            prefix = os.path.basename(word)
             if not prefix:
                 prefix = '.'
             
         pattern = "".join(["^", prefix, ".*"])
         completions = [name+os.sep for name in os.listdir(dirname) if os.path.isdir(os.path.join(dirname,name)) and re.search(pattern, name)]
         
-        if complete_word:
-            dirname = os.path.dirname(complete_word)
+        if word:
+            dirname = os.path.dirname(word)
             completions = [os.path.join(dirname,name) for name in completions]
         
         return completions
@@ -83,7 +86,7 @@ class ReadLineCompleter:
                 completions = [c for c in self.get_commands() if c.startswith(text)]
             else:
                 try:
-                    fcnt = getattr(self, "cmd_" + words[0])
+                    fcnt = getattr(self, "complete_" + words[0])
                     completions = fcnt(origline, words[-1])
                     completions = [origline[0:-len(words[-1])] + i for i in completions]
                 except:

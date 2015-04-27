@@ -39,22 +39,33 @@ class Tree:
         else:
             self.__add(node)
             
-    def del(self, value):
+    def delete(self, value):
         pass
         
     
-    def __printTree(self, root):
+    def __inorder(self, root, array = []):
+        """ Implementation of inorder - return list of nodes. """
         if root == None:
-            return
+            return array
+            
+        array = self.__inorder(root.left, array)
+        if root != None:
+            array.append(root)
+        array = self.__inorder(root.right, array)
         
-        self.__printTree(root.left)
-        print("{} ".format(root.value))
-        self.__printTree(root.right)
+        return array
+        
+    
+    def inorder(self):
+        """ Return list of inorder sorted nodes. """
+        return self.__inorder(self.root)
         
     
     def printTree(self):
-        """ Print tree """
-        self.__printTree(self.root)
+        """ Print tree in preorder. """
+        arr = self.inorder()
+        for node in arr:
+            print(node.value)
         
         
     def __getList(self, root, array):
@@ -87,5 +98,6 @@ if __name__ == "__main__":
     tree2 = Tree(v2)
     
     tree1.printTree()
+    
     print(tree1 == tree2)
     

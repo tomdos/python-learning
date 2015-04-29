@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import sys
 
 class TreeNode:
     def __init__(self, value = None, left = None, right = None):
@@ -44,12 +45,56 @@ class Tree:
         pass
 
     
-    def __preorderIteration(self, root):
-        pass
-
+    def __preorderIteration(self, node):
+        """ Implementation of preorder using iterative approach instead of recursion. """
+        array = []
+        stack = []
         
-    def preorderIteration(self, root):
-        pass
+        # visit
+        # left
+        # right (save)
+        while node:
+            array.append(node)
+    
+            if node.right:
+                stack.append(node.right)
+                
+            if node.left:
+                node = node.left
+            else:
+                try:
+                    node = stack.pop()
+                except:
+                    node = None
+                    
+        return array
+        
+        
+    def preorderIteration(self):
+        """ Preorder traversal without recursion. """
+        return self.__preorderIteration(self.root)
+        
+        
+    def __inorderIteration(self, node):
+        """ Implementation of inorder using iteration. """
+        array = []
+        stack = []
+        
+        while len(stack) or node:                        
+            if node:
+                stack.append(node)
+                node = node.left
+            else:
+                node = stack.pop()
+                array.append(node)
+                node = node.right
+            
+        return array
+    
+    
+    def inorderIteration(self):
+        """ Inorder traversal without recursion. """
+        return self.__inorderIteration(self.root)
         
         
     def __preorder(self, root, array = []):
@@ -67,7 +112,7 @@ class Tree:
     def preorder(self):
         """ Return list of preordered nodes. """
         return self.__preorder(self.root)
-        
+
     
     def __inorder(self, root, array = []):
         """ Implementation of inorder - return list of nodes. """
@@ -90,16 +135,24 @@ class Tree:
         """ Print tree. """
         if type == "inorder":
             arr = self.inorder()
+        elif type == "inorderIter":
+            arr = self.inorderIteration()
         elif type == "preorder":
             arr = self.preorder()
+        elif type == "preorderIter":
+            arr = self.preorderIteration()
         elif type == "postorder":
             print ("Not implemented yet.")
             return
+        elif type == "postorderIter":
+            print ("Not implemented yet.")
+            return
         else:
-            raise ValueError("Type must be inorder, preorder or postorder.")
+            raise ValueError
         
         for node in arr:
-            print(node.value)
+            sys.stdout.write("{} ".format(node.value))
+        sys.stdout.write("\n")
         
         
     def __getList(self, root, array):
@@ -130,7 +183,12 @@ if __name__ == "__main__":
     
     tree1 = Tree(v1)
     tree2 = Tree(v2)
+    
+    tree1.printTree(type="preorder")
+    tree1.printTree(type="preorderIter")
+    
     tree1.printTree(type="inorder")
+    tree1.printTree(type="inorderIter")    
     
     #print(tree1 == tree2)
     

@@ -38,9 +38,35 @@ class Tree:
             self.root = node
         else:
             self.__add(node)
+
             
     def delete(self, value):
         pass
+
+    
+    def __preorderIteration(self, root):
+        pass
+
+        
+    def preorderIteration(self, root):
+        pass
+        
+        
+    def __preorder(self, root, array = []):
+        """ Implementation of preorder. """
+        if root == None:
+            return array
+            
+        array.append(root)
+        array = self.__preorder(root.left, array)
+        array = self.__preorder(root.right, array)
+        
+        return array
+        
+        
+    def preorder(self):
+        """ Return list of preordered nodes. """
+        return self.__preorder(self.root)
         
     
     def __inorder(self, root, array = []):
@@ -49,8 +75,7 @@ class Tree:
             return array
             
         array = self.__inorder(root.left, array)
-        if root != None:
-            array.append(root)
+        array.append(root)
         array = self.__inorder(root.right, array)
         
         return array
@@ -61,9 +86,18 @@ class Tree:
         return self.__inorder(self.root)
         
     
-    def printTree(self):
-        """ Print tree in preorder. """
-        arr = self.inorder()
+    def printTree(self, type = "inorder"):
+        """ Print tree. """
+        if type == "inorder":
+            arr = self.inorder()
+        elif type == "preorder":
+            arr = self.preorder()
+        elif type == "postorder":
+            print ("Not implemented yet.")
+            return
+        else:
+            raise ValueError("Type must be inorder, preorder or postorder.")
+        
         for node in arr:
             print(node.value)
         
@@ -84,11 +118,11 @@ class Tree:
         return array
 
         
-    def __eq__(self, tree):
-        a1 = self.getList()
-        a2 = tree.getList()
-
-        return a1 == a2
+    #def __eq__(self, tree):
+    #    a1 = self.getList()
+    #    a2 = tree.getList()
+    #
+    #    return a1 == a2
 
 if __name__ == "__main__":
     v1 = (10,5,6,1,3,4,2,7)
@@ -96,8 +130,7 @@ if __name__ == "__main__":
     
     tree1 = Tree(v1)
     tree2 = Tree(v2)
+    tree1.printTree(type="inorder")
     
-    tree1.printTree()
-    
-    print(tree1 == tree2)
+    #print(tree1 == tree2)
     

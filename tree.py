@@ -43,6 +43,22 @@ class Tree:
             
     def delete(self, value):
         pass
+        
+        
+    def __depth(self, node):
+        """ Implementation of depth. """
+        if node == None:
+            return 0
+            
+        nLeft = self.__depth(node.left)
+        nRight = self.__depth(node.right)
+        
+        return (nLeft + 1) if (nLeft > nRight) else (nRight + 1)
+        
+        
+    def depth(self):
+        """ Return maximal depth of the tree. """
+        return self.__depth(self.root)        
 
     
     def __preorderIteration(self, node):
@@ -154,21 +170,6 @@ class Tree:
             sys.stdout.write("{} ".format(node.value))
         sys.stdout.write("\n")
         
-        
-    def __getList(self, root, array):
-        if root == None:
-            return
-        
-        self.__getList(root.left, array)
-        array.append(root.value)
-        self.__getList(root.right, array)
-
-    
-    def getList(self):
-        """ Return tree in a list structure. """
-        array = []
-        self.__getList(self.root, array)
-        return array
 
         
     #def __eq__(self, tree):
@@ -188,7 +189,9 @@ if __name__ == "__main__":
     tree1.printTree(type="preorderIter")
     
     tree1.printTree(type="inorder")
-    tree1.printTree(type="inorderIter")    
+    tree1.printTree(type="inorderIter")
+    
+    print(tree1.depth())
     
     #print(tree1 == tree2)
     
